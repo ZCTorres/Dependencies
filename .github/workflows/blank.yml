@@ -18,7 +18,7 @@ jobs:
 
       - name: Gradle Build
         id: gradle_build
-        run: ./gradlew build -i
+        run: ./gradlew build -i --warning-mode all
 
       - name: Check if Package Version Published
         id: version_check
