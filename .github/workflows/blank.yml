@@ -1,0 +1,39 @@
+name: Calculator Library Build
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: temurin
+          java-version: 11
+
+      - name: Gradle Build
+        id: gradle_build
+        run: ./gradlew build -i
+
+      - name: Check if Package Version Published
+        id: version_check
+        uses: jyeany/version-check-gradle@1.0.2
+        with:
+          access-token: ${{ secrets.PUBLISH_PACKAGES_PAT }}
+
+      - name: Print Version Check Changed
+        id: version_check_print
+        run: echo "changed ${{ steps.version_check.outputs.changed }}" && echo "version ${{ steps.version_check.outputs.version }}"
+
+      - name: Publish Package
+        if: steps.version_check.outputs.changed == 'true'
+        id: publish_calculator_lib
+        run: ./gradlew publish
+        env:
+          GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}
+          GITHUB_TOKEN: ${{ secrets.PUBLISH_PACKAGES_PAT }}
