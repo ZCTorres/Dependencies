@@ -1,0 +1,23 @@
+name: 'Checking Android Dependencies'
+description: 'Checking the specified file for any newer versions'
+inputs:
+  file-name:
+    default: ''
+    description: 'The file name to search through'
+    required: true
+  open-issue:
+    default: false
+    description: 'If newer versions are found, a new issue will be opened.'
+    required: false
+  github-token:
+    description: 'GitHub token'
+    required: true
+outputs:
+  dependencies:
+    description: 'The list of dependencies with their updated versions.'
+runs:
+  using: 'node16'
+  main: 'index.js'
+branding:
+  icon: 'upload-cloud'
+  color: 'blue'
