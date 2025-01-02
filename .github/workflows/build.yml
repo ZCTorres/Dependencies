@@ -1,4 +1,8 @@
-name: Dependency Build
+ame: Test Android Dependency Updates
+
+on: [workflow_dispatch]
+
+jobs:
   check-dependencies:
     runs-on: ubuntu-latest
     steps:
@@ -14,7 +18,7 @@ name: Dependency Build
       run: npm install
 
     - name: Check For Dependency Updates
-      uses: JuriKiin/android-dependency-updates@2024.1.9
+      uses: ./
       with:
         file-name: 'libs.versions.toml'
         open-issue: true
