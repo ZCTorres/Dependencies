@@ -6,24 +6,5 @@ jobs:
   check-dependencies:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '16'
-
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 18
-    - run: npm ci
-    - run: npm test
-
-    - name: Check For Dependency Updates
-      uses: ./
-      with:
-        file-name: 'libs.versions.toml'
-        open-issue: true
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Checking Android Dependencies
+      uses: JuriKiin/android-dependency-updates@2024.1.9
