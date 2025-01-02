@@ -1,4 +1,4 @@
-ame: Test Android Dependency Updates
+name: Test Android Dependency Updates
 
 on: [workflow_dispatch]
 
