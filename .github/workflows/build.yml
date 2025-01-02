@@ -1,4 +1,4 @@
-name: Calculator Library Build
+name: Dependency Build
 
 on: [push, workflow_dispatch]
 
