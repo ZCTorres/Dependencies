@@ -44,7 +44,8 @@ async function parseDependencyFile(fileName) {
       let dependencies = [];
 
       for (const [key, value] of Object.entries(parsedToml.libraries)) {
-        if (value.version.ref) {
+        core.info(JSON.stringify(value))
+        if (Object.hasOwn(value.version.ref)) {
             const versionRef = value.version.ref;
             const version = parsedToml.versions[versionRef];
             if (version) {
