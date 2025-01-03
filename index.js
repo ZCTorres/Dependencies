@@ -44,21 +44,27 @@ async function parseDependencyFile(fileName) {
       let dependencies = [];
 
       for (const [key, value] of Object.entries(parsedToml.libraries)) {
-        core.info(JSON.stringify(value))
-        if (Object.hasOwn(value.version.ref)) {
-            const versionRef = value.version.ref;
-            const version = parsedToml.versions[versionRef];
-            if (version) {
-                dependencies.push({
-                    name: value.module,
-                    version: version
-                });
-            }
-        } else {
-            core.info("Version.ref not found for " + key);
-        }
+        try{
+          core.info(JSON.stringify(value))
+          const version = value["version"]
+          const ref = version["ref"]
+          if (typeof ref !== 'undefined') {
+              const version = parsedToml.versions[ref];
+              if (version) {
+                  dependencies.push({
+                      groupId: value["group"],
+                      name: value["name"],
+                      version: version
+                  });
+              }
+          } else {
+              core.info("Version.ref not found for " + key);
+          }
+      } catch(ex) {
+        core.error(`FOR: Error parsing TOML file: ${ex}`);
       }
       return dependencies;
+    }
   } catch (error) {
       core.error(`Error parsing TOML file: ${error}`);
       return [];
@@ -69,8 +75,8 @@ async function checkForUpdates(dependencies) {
   let updates = [];
 
   for(const dependency of dependencies) {
-    const [groupId, artifactId] = dependency.name.split(':');
-    const latestVersion = await fetchLatestVersion(groupId, artifactId);
+    core.info("checkForUpdates: " + JSON.stringify(dependency))
+    const latestVersion = await fetchLatestVersion(dependency.groupId, dependency.name);
     if (latestVersion && dependency.version !== latestVersion) {
       updates.push({
         name: dependency.name,
@@ -89,6 +95,7 @@ async function fetchLatestVersion(groupId, artifactId) {
   try {
     const response = await axios.get(url);
     const data = response.data;
+    core.info("fetchLatestVersion: " + JSON.stringify(data))
     return data.response.docs[0].latestVersion;
   } catch (error) {
     core.error(`Error fetching latest version for ${groupId}:${artifactId}: ${error}`);
