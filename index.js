@@ -28,7 +28,7 @@ async function run() {
 
           // Open an issue if there are updates and openIssue is true
           if (openIssue) {
-              await createIssue(updates);
+//              await createIssue(updates);
           }
         }
     } catch (error) {
@@ -45,7 +45,7 @@ async function parseDependencyFile(fileName) {
 
       for (const [key, value] of Object.entries(parsedToml.libraries)) {
         try{
-          core.info(JSON.stringify(value))
+          core.info(JSON.stringify(value["name"]))
           const version = value["version"]
           const ref = version["ref"]
           if (typeof ref !== 'undefined') {
@@ -75,7 +75,6 @@ async function checkForUpdates(dependencies) {
   let updates = [];
 
   for(const dependency of dependencies) {
-    core.info("checkForUpdates: " + JSON.stringify(dependency))
     const latestVersion = await fetchLatestVersion(dependency.groupId, dependency.name);
     if (latestVersion && dependency.version !== latestVersion) {
       updates.push({
@@ -95,7 +94,6 @@ async function fetchLatestVersion(groupId, artifactId) {
   try {
     const response = await axios.get(url);
     const data = response.data;
-    core.info("fetchLatestVersion: " + JSON.stringify(data))
     return data.response.docs[0].latestVersion;
   } catch (error) {
     core.error(`Error fetching latest version for ${groupId}:${artifactId}: ${error}`);
